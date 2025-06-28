@@ -108,8 +108,9 @@ class AlbumsFragment(context: Context, attributeSet: AttributeSet) : MyViewPager
         val shuffled = albums.shuffled()
         val tracks = context.audioHelper.getAlbumTracks(shuffled)
 
-        getAdapter()?.clearQueue()
-        getAdapter()?.addToQueue(tracks)
+        val adapter = getAdapter()
+        adapter?.clearQueue()
+        adapter?.addToQueue(tracks)
     }
 
     override fun setupColors(textColor: Int, adjustedPrimaryColor: Int) {

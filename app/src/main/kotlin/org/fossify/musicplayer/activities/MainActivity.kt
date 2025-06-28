@@ -30,6 +30,7 @@ import org.fossify.musicplayer.helpers.M3uImporter.ImportResult
 import org.fossify.musicplayer.models.Events
 import org.fossify.musicplayer.models.sortSafely
 import org.fossify.musicplayer.playback.CustomCommands
+import org.fossify.musicplayer.playback.PlaybackService.Companion.updatePlaybackInfo
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -539,11 +540,23 @@ class MainActivity : SimpleMusicActivity() {
 
     private fun launchShuffle() {
         hideKeyboard()
-        ShuffleDialog(this) {
-            Toast.makeText(this, "Shuffling!", Toast.LENGTH_SHORT).show()
-            ensureBackgroundThread {
-                getCurrentFragment()?.onShuffle(this)
+        var me = this
+        withPlayer {
+            if (mediaItemCount > 0) {
+                ShuffleDialog(me) {
+                    toast("Shuffling")
+                    ensureBackgroundThread {
+                        getCurrentFragment()?.onShuffle(me)
+                    }
+                }
             }
+            else {
+                toast("Shuffling!")
+                ensureBackgroundThread {
+                    getCurrentFragment()?.onShuffle(me)
+                }
+            }
+            updatePlaybackInfo(this)
         }
     }
 
