@@ -96,6 +96,10 @@ class FoldersFragment(context: Context, attributeSet: AttributeSet) : MyViewPage
         }
     }
 
+    override fun onShuffle(activity: SimpleActivity) {
+        // Shuffle is not applicable here
+    }
+
     override fun setupColors(textColor: Int, adjustedPrimaryColor: Int) {
         binding.foldersPlaceholder.setTextColor(textColor)
         binding.foldersFastscroller.updateColors(adjustedPrimaryColor)

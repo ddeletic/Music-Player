@@ -106,6 +106,10 @@ class PlaylistsFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
         }
     }
 
+    override fun onShuffle(activity: SimpleActivity) {
+        // Shuffle is not applicable here
+    }
+
     override fun setupColors(textColor: Int, adjustedPrimaryColor: Int) {
         binding.playlistsPlaceholder.setTextColor(textColor)
         binding.playlistsPlaceholder2.setTextColor(adjustedPrimaryColor)

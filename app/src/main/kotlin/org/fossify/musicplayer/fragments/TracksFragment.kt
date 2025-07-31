@@ -16,6 +16,7 @@ import org.fossify.musicplayer.extensions.audioHelper
 import org.fossify.musicplayer.extensions.config
 import org.fossify.musicplayer.extensions.mediaScanner
 import org.fossify.musicplayer.extensions.viewBinding
+import org.fossify.musicplayer.helpers.TAB_PLAYLISTS
 import org.fossify.musicplayer.helpers.TAB_TRACKS
 import org.fossify.musicplayer.models.Track
 import org.fossify.musicplayer.models.sortSafely
@@ -103,6 +104,11 @@ class TracksFragment(context: Context, attributeSet: AttributeSet) : MyViewPager
             tracks.sortSafely(activity.config.trackSorting)
             adapter.updateItems(tracks, forceUpdate = true)
         }
+    }
+
+    override fun onShuffle(activity: SimpleActivity) {
+        getAdapter()?.clearQueue()
+        getAdapter()?.addToQueue(tracks.shuffled())
     }
 
     override fun setupColors(textColor: Int, adjustedPrimaryColor: Int) {

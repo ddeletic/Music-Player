@@ -93,11 +93,31 @@ abstract class BaseMusicAdapter<Type>(
         return !selectedTrack.path.startsWith("content://") && tagHelper.isEditTagSupported(selectedTrack)
     }
 
+    fun clearQueue() {
+        ensureBackgroundThread {
+            context.runOnUiThread {
+                context.clearQueue() {
+                    finishActMode()
+                }
+            }
+        }
+    }
+
     fun addToQueue() {
         ensureBackgroundThread {
             val allSelectedTracks = getAllSelectedTracks()
             context.runOnUiThread {
                 context.addTracksToQueue(allSelectedTracks) {
+                    finishActMode()
+                }
+            }
+        }
+    }
+
+    fun addToQueue(tracks: List<Track>) {
+        ensureBackgroundThread {
+            context.runOnUiThread {
+                context.addTracksToQueue(tracks) {
                     finishActMode()
                 }
             }

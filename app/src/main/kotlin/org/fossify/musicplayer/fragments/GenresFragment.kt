@@ -22,6 +22,7 @@ import org.fossify.musicplayer.extensions.config
 import org.fossify.musicplayer.extensions.mediaScanner
 import org.fossify.musicplayer.extensions.viewBinding
 import org.fossify.musicplayer.helpers.GENRE
+import org.fossify.musicplayer.helpers.TAB_FOLDERS
 import org.fossify.musicplayer.helpers.TAB_GENRES
 import org.fossify.musicplayer.models.Genre
 import org.fossify.musicplayer.models.sortSafely
@@ -99,6 +100,10 @@ class GenresFragment(context: Context, attributeSet: AttributeSet) : MyViewPager
             genres.sortSafely(activity.config.genreSorting)
             adapter.updateItems(genres, forceUpdate = true)
         }
+    }
+
+    override fun onShuffle(activity: SimpleActivity) {
+        // Shuffle is not applicable here
     }
 
     override fun setupColors(textColor: Int, adjustedPrimaryColor: Int) {

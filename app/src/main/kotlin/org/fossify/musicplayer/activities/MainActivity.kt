@@ -22,13 +22,13 @@ import org.fossify.commons.models.Release
 import org.fossify.musicplayer.R
 import org.fossify.musicplayer.adapters.ViewPagerAdapter
 import org.fossify.musicplayer.databinding.ActivityMainBinding
-import org.fossify.musicplayer.dialogs.NewPlaylistDialog
-import org.fossify.musicplayer.dialogs.SelectPlaylistDialog
-import org.fossify.musicplayer.dialogs.SleepTimerCustomDialog
+import org.fossify.musicplayer.dialogs.*
 import org.fossify.musicplayer.extensions.*
+import org.fossify.musicplayer.fragments.*
 import org.fossify.musicplayer.helpers.*
 import org.fossify.musicplayer.helpers.M3uImporter.ImportResult
 import org.fossify.musicplayer.models.Events
+import org.fossify.musicplayer.models.sortSafely
 import org.fossify.musicplayer.playback.CustomCommands
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -140,6 +140,14 @@ class MainActivity : SimpleMusicActivity() {
             findItem(R.id.create_playlist_from_folder).isVisible = isPlaylistFragment
             findItem(R.id.import_playlist).isVisible = isPlaylistFragment
             findItem(R.id.more_apps_from_us).isVisible = !resources.getBoolean(org.fossify.commons.R.bool.hide_google_relations)
+            var isShuffleable = true
+
+            val currentFragment = getCurrentFragment()
+            if ((currentFragment is GenresFragment) or (currentFragment is FoldersFragment) or isPlaylistFragment)
+            {
+                isShuffleable = false
+            }
+            findItem(R.id.shuffle).isVisible = isShuffleable
         }
     }
 
@@ -167,6 +175,7 @@ class MainActivity : SimpleMusicActivity() {
                 R.id.create_playlist_from_folder -> createPlaylistFromFolder()
                 R.id.import_playlist -> tryImportPlaylist()
                 R.id.equalizer -> launchEqualizer()
+                R.id.shuffle -> launchShuffle()
                 R.id.more_apps_from_us -> launchMoreAppsFromUsIntent()
                 R.id.settings -> launchSettings()
                 R.id.about -> launchAbout()
@@ -526,6 +535,16 @@ class MainActivity : SimpleMusicActivity() {
     private fun launchEqualizer() {
         hideKeyboard()
         startActivity(Intent(applicationContext, EqualizerActivity::class.java))
+    }
+
+    private fun launchShuffle() {
+        hideKeyboard()
+        ShuffleDialog(this) {
+            Toast.makeText(this, "Shuffling!", Toast.LENGTH_SHORT).show()
+            ensureBackgroundThread {
+                getCurrentFragment()?.onShuffle(this)
+            }
+        }
     }
 
     private fun launchSettings() {

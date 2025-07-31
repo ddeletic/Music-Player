@@ -22,6 +22,7 @@ import org.fossify.musicplayer.extensions.config
 import org.fossify.musicplayer.extensions.mediaScanner
 import org.fossify.musicplayer.extensions.viewBinding
 import org.fossify.musicplayer.helpers.ARTIST
+import org.fossify.musicplayer.helpers.TAB_ALBUMS
 import org.fossify.musicplayer.helpers.TAB_ARTISTS
 import org.fossify.musicplayer.models.Artist
 import org.fossify.musicplayer.models.sortSafely
@@ -99,6 +100,14 @@ class ArtistsFragment(context: Context, attributeSet: AttributeSet) : MyViewPage
             artists.sortSafely(activity.config.artistSorting)
             adapter.updateItems(artists, forceUpdate = true)
         }
+    }
+
+    override fun onShuffle(activity: SimpleActivity) {
+        val shuffled = artists.shuffled()
+        val tracks = context.audioHelper.getArtistTracks(shuffled)
+
+        getAdapter()?.clearQueue()
+        getAdapter()?.addToQueue(tracks)
     }
 
     override fun setupColors(textColor: Int, adjustedPrimaryColor: Int) {

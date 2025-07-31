@@ -39,6 +39,11 @@
         android:title="@string/equalizer"
         app:showAsAction="always" />
     <item
+        android:id="@+id/shuffle"
+        android:icon="@drawable/ic_shuffle_vector"
+        android:title="@string/shuffle"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/settings"
         android:icon="@drawable/ic_settings_cog_vector"
         android:title="@string/settings"

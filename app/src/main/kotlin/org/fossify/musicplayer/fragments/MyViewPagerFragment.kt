@@ -19,6 +19,8 @@ abstract class MyViewPagerFragment(context: Context, attributeSet: AttributeSet)
 
     abstract fun onSortOpen(activity: SimpleActivity)
 
+    abstract fun onShuffle(activity: SimpleActivity)
+
     abstract fun setupColors(textColor: Int, adjustedPrimaryColor: Int)
 
     fun prepareAndPlay(tracks: List<Track>, startIndex: Int = 0, startPositionMs: Long = 0, startActivity: Boolean = true) {

@@ -3,6 +3,8 @@ package org.fossify.musicplayer.fragments
 import android.content.Context
 import android.content.Intent
 import android.util.AttributeSet
+import android.util.Log
+import android.widget.Toast
 import com.google.gson.Gson
 import org.fossify.commons.activities.BaseSimpleActivity
 import org.fossify.commons.extensions.areSystemAnimationsEnabled
@@ -100,6 +102,14 @@ class AlbumsFragment(context: Context, attributeSet: AttributeSet) : MyViewPager
             albums.sortSafely(activity.config.albumSorting)
             adapter.updateItems(albums, forceUpdate = true)
         }
+    }
+
+    override fun onShuffle(activity: SimpleActivity) {
+        val shuffled = albums.shuffled()
+        val tracks = context.audioHelper.getAlbumTracks(shuffled)
+
+        getAdapter()?.clearQueue()
+        getAdapter()?.addToQueue(tracks)
     }
 
     override fun setupColors(textColor: Int, adjustedPrimaryColor: Int) {

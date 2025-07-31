@@ -85,6 +85,14 @@ abstract class SimpleControllerActivity : SimpleActivity(), Player.Listener {
         }
     }
 
+    fun clearQueue(callback: (() -> Unit)? = null) {
+        withPlayer {
+            removeMediaItems(0, currentMediaItems.count())
+            updatePlaybackInfo(this)
+            callback?.invoke()
+        }
+    }
+
     fun removeQueueItems(tracks: List<Track>, callback: (() -> Unit)? = null) {
         withPlayer {
             var currentItemChanged = false
