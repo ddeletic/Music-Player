@@ -22,6 +22,7 @@ import kotlin.system.exitProcess
 
 class SettingsActivity : SimpleControllerActivity() {
 
+    private val DEJAN = true
     private val binding by viewBinding(ActivitySettingsBinding::inflate)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +39,7 @@ class SettingsActivity : SimpleControllerActivity() {
 
         setupCustomizeColors()
         setupCustomizeWidgetColors()
+        setupLaunchOnBluetooth()
         setupUseEnglish()
         setupLanguage()
         setupManageExcludedFolders()
@@ -95,6 +97,14 @@ class SettingsActivity : SimpleControllerActivity() {
         settingsSwapPrevNextHolder.setOnClickListener {
             settingsSwapPrevNext.toggle()
             config.swapPrevNext = settingsSwapPrevNext.isChecked
+        }
+    }
+
+    private fun setupLaunchOnBluetooth() = binding.apply {
+        settingsLaunchOnBluetooth.isChecked = config.launchOnBluetooth
+        settingsLaunchOnBluetoothHolder.setOnClickListener {
+            settingsLaunchOnBluetooth.toggle()
+            config.launchOnBluetooth = settingsLaunchOnBluetooth.isChecked
         }
     }
 

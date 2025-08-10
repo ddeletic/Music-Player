@@ -1,13 +1,19 @@
 package org.fossify.musicplayer.activities
 
+import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.AudioManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import me.grantland.widget.AutofitHelper
 import org.fossify.musicplayer.BuildConfig
@@ -28,7 +34,6 @@ import org.fossify.musicplayer.fragments.*
 import org.fossify.musicplayer.helpers.*
 import org.fossify.musicplayer.helpers.M3uImporter.ImportResult
 import org.fossify.musicplayer.models.Events
-import org.fossify.musicplayer.models.sortSafely
 import org.fossify.musicplayer.playback.CustomCommands
 import org.fossify.musicplayer.playback.PlaybackService.Companion.updatePlaybackInfo
 import org.greenrobot.eventbus.EventBus
@@ -75,8 +80,21 @@ class MainActivity : SimpleMusicActivity() {
         }
 
         volumeControlStream = AudioManager.STREAM_MUSIC
+
         checkWhatsNewDialog()
         checkAppOnSDCard()
+    }
+
+    private val requestBtPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allPermissionsGranted = permissions.entries.all { it.value }
+        if (allPermissionsGranted) {
+            // Start the foreground service after permissions are granted.
+            startBluetoothService(true)
+        } else {
+            Log.e("ddd", "Not all permissions granted. Bluetooth detection may not work.")
+        }
     }
 
     override fun onResume() {
@@ -86,6 +104,13 @@ class MainActivity : SimpleMusicActivity() {
             config.lastUsedViewPagerPage = 0
             System.exit(0)
             return
+        }
+
+        if (config.launchOnBluetooth == true) {
+            NotificationHelper.createInstance(this).createBluetoothChannel()
+
+            requestBluetoothPermissions()
+            startBluetoothService(true)
         }
 
         updateMenuColors()
@@ -105,6 +130,10 @@ class MainActivity : SimpleMusicActivity() {
         if (storedExcludedFolders != config.excludedFolders.hashCode()) {
             refreshAllFragments()
         }
+
+        withPlayer {
+            updatePlaybackInfo(this)
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -122,6 +151,11 @@ class MainActivity : SimpleMusicActivity() {
     override fun onDestroy() {
         super.onDestroy()
         bus?.unregister(this)
+
+        withPlayer {
+            stop()
+        }
+        startBluetoothService(false)        // This notifies the service that the aap has stopped
     }
 
     override fun onBackPressedCompat(): Boolean {
@@ -598,5 +632,26 @@ class MainActivity : SimpleMusicActivity() {
                 startActivity(this)
             }
         }
+    }
+    private fun requestBluetoothPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            permissionsToRequest.add(Manifest.permission.BLUETOOTH_CONNECT)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            requestBtPermissionLauncher.launch(permissionsToRequest.toTypedArray())
+        }
+    }
+
+    private fun startBluetoothService(app_active: Boolean) {
+        val intent = Intent(this, BluetoothConnectionService::class.java)
+        intent.putExtra(BluetoothConnectionService.APP_ACTIVE_FLAG, app_active)
+        ContextCompat.startForegroundService(this, intent)
     }
 }
