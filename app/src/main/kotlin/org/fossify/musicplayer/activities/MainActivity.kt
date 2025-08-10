@@ -1,7 +1,9 @@
 package org.fossify.musicplayer.activities
 
 import android.Manifest
-import android.content.*
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.AudioManager
@@ -14,6 +16,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
+import com.google.gson.Gson
+import java.io.File
+import java.io.FileOutputStream
 import me.grantland.widget.AutofitHelper
 import org.fossify.musicplayer.BuildConfig
 import org.fossify.commons.databinding.BottomTablayoutItemBinding
@@ -33,14 +38,20 @@ import org.fossify.musicplayer.fragments.*
 import org.fossify.musicplayer.helpers.*
 import org.fossify.musicplayer.helpers.M3uImporter.ImportResult
 import org.fossify.musicplayer.models.Events
+import org.fossify.musicplayer.models.toMediaItemsFast
 import org.fossify.musicplayer.playback.CustomCommands
 import org.fossify.musicplayer.playback.PlaybackService.Companion.updatePlaybackInfo
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.FileOutputStream
 
 class MainActivity : SimpleMusicActivity() {
+    data class QueueInfo (
+        val currentIndex: Int,
+        val currentPos: Long,
+        val mediaIds: List<Long>
+    )
+
     private val PICK_IMPORT_SOURCE_INTENT = 1
 
     private var bus: EventBus? = null
@@ -50,6 +61,9 @@ class MainActivity : SimpleMusicActivity() {
     override var isSearchBarEnabled = true
 
     private val binding by viewBinding(ActivityMainBinding::inflate)
+
+    // File name to save the queue to
+    private val queueFileName = "queue.json"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +103,8 @@ class MainActivity : SimpleMusicActivity() {
 
         checkWhatsNewDialog()
         checkAppOnSDCard()
+
+        restoreQueue()
     }
 
     private val requestBtPermissionLauncher = registerForActivityResult(
@@ -164,6 +180,11 @@ class MainActivity : SimpleMusicActivity() {
         config.lastUsedViewPagerPage = binding.viewPager.currentItem
     }
 
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        saveQueue()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         bus?.unregister(this)
@@ -171,6 +192,7 @@ class MainActivity : SimpleMusicActivity() {
         withPlayer {
             stop()
         }
+        saveQueue()
         startBluetoothService(false)        // This notifies the service that the aap has stopped
     }
 
@@ -181,6 +203,9 @@ class MainActivity : SimpleMusicActivity() {
             launchOnBluetooth = false
             playOnBluetooth = false
         }
+
+        val file = File(filesDir, queueFileName)
+        file.delete()
 
         withPlayer {
             clearMediaItems()
@@ -200,6 +225,65 @@ class MainActivity : SimpleMusicActivity() {
             true
         } else {
             false
+        }
+    }
+
+    private fun saveQueue() {
+        withPlayer {
+            val queueInfo = QueueInfo (
+                currentIndex = currentMediaItemIndex,
+                currentPos = getCurrentPosition(),
+                mediaIds = currentMediaItems.map { it.mediaId.toLong() }
+            )
+
+            val numTracks =queueInfo.mediaIds.count()
+            if (numTracks > 1) {
+                Log.i("ddd", "Saving the queue. $numTracks songs")
+                val gson = Gson()
+                val json = gson.toJson(queueInfo)
+                val file = File(filesDir, queueFileName)
+
+                file.writeText(json)
+                Log.i("ddd", "Saving the queue - done.")
+            }
+        }
+    }
+
+    private fun restoreQueue() {
+        withPlayer {
+            val file = File(filesDir, queueFileName)
+            if (file.exists()) {
+                Log.i("ddd", "Restoring the queue.")
+                ensureBackgroundThread {
+                    try {
+                        val json = file.readText()
+                        val queueInfo = Gson().fromJson(json, QueueInfo::class.java)
+                        val allTracksIdMap = audioHelper.getAllTracks().associateBy { it.mediaStoreId }
+                        val queueTracks = queueInfo.mediaIds.mapNotNull { allTracksIdMap[it] }
+
+                        withPlayer {
+                            val queueCount = queueInfo.mediaIds.count()
+                            if (getMediaItemCount() < queueCount) {
+                                val mediaItems = queueTracks.toMediaItemsFast()
+
+                                Log.i("ddd", "Adding $queueCount to the queue. Current song is ${queueInfo.currentIndex} @ ${queueInfo.currentPos}ms.")
+                                clearMediaItems()
+                                addMediaItems(mediaItems)
+                                seekTo(queueInfo.currentIndex, queueInfo.currentPos)
+                                updatePlaybackInfo(this)
+                                Log.i("ddd", "Restoring the queue - done.")
+                            }
+                            else {
+                                Log.i("ddd", "Queue does not need restoring.")
+                            }
+                        }
+                    }
+                    catch (e: Exception) {
+                        e.printStackTrace()
+                        null
+                    }
+                }
+            }
         }
     }
 
