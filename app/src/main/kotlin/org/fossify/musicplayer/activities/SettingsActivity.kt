@@ -69,6 +69,12 @@ class SettingsActivity : SimpleControllerActivity() {
     private fun setupUseEnglish() = binding.apply {
         settingsUseEnglishHolder.beVisibleIf((config.wasUseEnglishToggled || Locale.getDefault().language != "en") && !isTiramisuPlus())
         settingsUseEnglish.isChecked = config.useEnglish
+        val DEJAN = true
+        if ((DEJAN == true) && (settingsUseEnglish.isChecked == true)) {
+            settingsColorCustomizationSectionLabel.text = "Colour Customisation"
+            settingsColorCustomizationLabel.text = "Customise colours"
+            settingsWidgetColorCustomizationLabel.text = "Customise widget colours"
+        }
         settingsUseEnglishHolder.setOnClickListener {
             settingsUseEnglish.toggle()
             config.useEnglish = settingsUseEnglish.isChecked
