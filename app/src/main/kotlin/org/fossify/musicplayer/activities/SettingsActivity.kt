@@ -40,6 +40,7 @@ class SettingsActivity : SimpleControllerActivity() {
         setupCustomizeColors()
         setupCustomizeWidgetColors()
         setupLaunchOnBluetooth()
+        setupPlayOnBluetooth()
         setupUseEnglish()
         setupLanguage()
         setupManageExcludedFolders()
@@ -105,6 +106,14 @@ class SettingsActivity : SimpleControllerActivity() {
         settingsLaunchOnBluetoothHolder.setOnClickListener {
             settingsLaunchOnBluetooth.toggle()
             config.launchOnBluetooth = settingsLaunchOnBluetooth.isChecked
+        }
+    }
+
+    private fun setupPlayOnBluetooth() = binding.apply {
+        settingsPlayOnBluetooth.isChecked = config.playOnBluetooth
+        settingsPlayOnBluetoothHolder.setOnClickListener {
+            settingsPlayOnBluetooth.toggle()
+            config.playOnBluetooth = settingsPlayOnBluetooth.isChecked
         }
     }
 

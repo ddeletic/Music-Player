@@ -49,6 +49,15 @@ class BluetoothConnectionService : Service() {
                             notificationHelper.notify(it.address.hashCode(), notification)
                         }
                     }
+                    else {
+                        // Notify MainActivity that a Bluetooth speaker has connected
+                        Log.d("ddd", "BluetoothConnectionService informing MainActivity that a device has connected")
+                        val intent = Intent(context, MainActivity::class.java).apply {
+                            action = "ACTION_BT_CONNECTED"
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        }
+                        context?.startActivity(intent)
+                    }
                 }
                 else if (state == BluetoothProfile.STATE_DISCONNECTED) {
                     val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)

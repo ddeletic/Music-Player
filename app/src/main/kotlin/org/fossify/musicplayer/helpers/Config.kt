@@ -32,6 +32,10 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(LAUNCH_ON_BLUETOOTH, false)
         set(launchOnBluetooth) = prefs.edit().putBoolean(LAUNCH_ON_BLUETOOTH, launchOnBluetooth).apply()
 
+    var playOnBluetooth: Boolean
+        get() = prefs.getBoolean(PLAY_ON_BLUETOOTH, false)
+        set(playOnBluetooth) = prefs.edit().putBoolean(PLAY_ON_BLUETOOTH, playOnBluetooth).apply()
+
     var lastSleepTimerSeconds: Int
         get() = prefs.getInt(LAST_SLEEP_TIMER_SECONDS, 30 * 60)
         set(lastSleepTimerSeconds) = prefs.edit().putInt(LAST_SLEEP_TIMER_SECONDS, lastSleepTimerSeconds).apply()

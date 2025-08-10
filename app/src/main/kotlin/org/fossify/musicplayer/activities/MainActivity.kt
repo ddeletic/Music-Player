@@ -1,8 +1,7 @@
 package org.fossify.musicplayer.activities
 
 import android.Manifest
-import android.content.ActivityNotFoundException
-import android.content.Intent
+import android.content.*
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.AudioManager
@@ -70,6 +69,13 @@ class MainActivity : SimpleMusicActivity() {
         setupTabs()
         setupCurrentTrackBar(binding.currentTrackBar.root)
 
+        val sharedPrefs = getSharedPreferences("music_player_preferences", Context.MODE_PRIVATE)
+        val isFirstRun = sharedPrefs.getBoolean("is_first_run", true)
+        if (isFirstRun) {
+            onFirstRun()
+            sharedPrefs.edit().putBoolean("is_first_run", false).apply()
+        }
+
         handlePermission(getPermissionToRequest()) {
             if (it) {
                 initActivity()
@@ -94,6 +100,16 @@ class MainActivity : SimpleMusicActivity() {
             startBluetoothService(true)
         } else {
             Log.e("ddd", "Not all permissions granted. Bluetooth detection may not work.")
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent?.action == "ACTION_BT_CONNECTED") {
+            if (config.playOnBluetooth == true) {
+                Log.i("ddd", "Bluetooth speaker connected. Starting playback.")
+                startMusic()
+            }
         }
     }
 
@@ -156,6 +172,26 @@ class MainActivity : SimpleMusicActivity() {
             stop()
         }
         startBluetoothService(false)        // This notifies the service that the aap has stopped
+    }
+
+    private fun onFirstRun() {
+        // This is the first run after install
+        Log.d("ddd", "First run")
+        config.apply {
+            launchOnBluetooth = false
+            playOnBluetooth = false
+        }
+
+        withPlayer {
+            clearMediaItems()
+            updatePlaybackInfo(this)
+        }
+    }
+
+    private fun startMusic() {
+        withPlayer {
+            play()
+        }
     }
 
     override fun onBackPressedCompat(): Boolean {
