@@ -14,7 +14,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import com.google.gson.Gson
 import java.io.File
@@ -119,16 +118,6 @@ class MainActivity : SimpleMusicActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        if (intent?.action == "ACTION_BT_CONNECTED") {
-            if (config.playOnBluetooth == true) {
-                Log.i("ddd", "Bluetooth speaker connected. Starting playback.")
-                startMusic()
-            }
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         handleNotificationIntent(intent)
@@ -171,6 +160,12 @@ class MainActivity : SimpleMusicActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
+        if (intent?.action == "ACTION_BT_CONNECTED") {
+            if (config.playOnBluetooth == true) {
+                Log.i("ddd", "Bluetooth speaker connected. Starting playback.")
+                startMusic()
+            }
+        }
         handleNotificationIntent(intent)
     }
 

@@ -1,9 +1,5 @@
 package org.fossify.musicplayer.helpers
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.bluetooth.BluetoothA2dp
 import android.bluetooth.BluetoothDevice
@@ -12,16 +8,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import org.fossify.musicplayer.BuildConfig
-import org.fossify.musicplayer.R
 import org.fossify.musicplayer.activities.MainActivity
 
 class BluetoothConnectionService : Service() {
