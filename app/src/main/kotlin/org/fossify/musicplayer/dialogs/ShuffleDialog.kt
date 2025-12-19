@@ -5,10 +5,12 @@ import org.fossify.commons.extensions.*
 import org.fossify.musicplayer.R
 import org.fossify.musicplayer.databinding.DialogShuffleBinding
 
-class ShuffleDialog(val activity: Activity, val callback: () -> Unit) {
+class ShuffleDialog(val activity: Activity, val text: String, val callback: () -> Unit) {
     private val binding by activity.viewBinding(DialogShuffleBinding::inflate)
 
     init {
+        binding.shuffleDialogLabel.text = text
+
         activity.getAlertDialogBuilder()
             .setPositiveButton(org.fossify.commons.R.string.yes) { _, _ -> dialogConfirmed() }
             .setNegativeButton(org.fossify.commons.R.string.no, null)

@@ -9,6 +9,11 @@
         android:title="@string/sort_by"
         app:showAsAction="always" />
     <item
+        android:id="@+id/clear_queue"
+        android:showAsAction="never"
+        android:title="Clear queue"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/create_new_playlist"
         android:showAsAction="never"
         android:title="@string/create_new_playlist"

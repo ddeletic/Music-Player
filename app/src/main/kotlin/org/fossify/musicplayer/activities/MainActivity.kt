@@ -321,12 +321,13 @@ class MainActivity : SimpleMusicActivity() {
                 R.id.sort -> showSortingDialog()
                 R.id.rescan_media -> refreshAllFragments(showProgress = true)
                 R.id.sleep_timer -> showSleepTimer()
+                R.id.clear_queue -> confirmAndClearQueue()
                 R.id.create_new_playlist -> createNewPlaylist()
                 R.id.create_playlist_from_folder -> createPlaylistFromFolder()
                 R.id.import_playlist -> tryImportPlaylist()
                 R.id.equalizer -> launchEqualizer()
                 R.id.shuffle -> launchShuffle()
-                R.id.more_apps_from_us -> launchMoreAppsFromUsIntent()
+//                R.id.more_apps_from_us -> launchMoreAppsFromUsIntent()
                 R.id.settings -> launchSettings()
                 R.id.about -> launchAbout()
                 else -> return@setOnMenuItemClickListener false
@@ -692,7 +693,7 @@ class MainActivity : SimpleMusicActivity() {
         var me = this
         withPlayer {
             if (mediaItemCount > 0) {
-                ShuffleDialog(me) {
+                ShuffleDialog(me, getString(R.string.shuffle_confirm)) {
                     toast("Shuffling")
                     ensureBackgroundThread {
                         getCurrentFragment()?.onShuffle(me)
@@ -768,5 +769,12 @@ class MainActivity : SimpleMusicActivity() {
         val intent = Intent(this, BluetoothConnectionService::class.java)
         intent.putExtra(BluetoothConnectionService.APP_ACTIVE_FLAG, app_active)
         ContextCompat.startForegroundService(this, intent)
+    }
+
+    private fun confirmAndClearQueue() {
+        var me = this
+        ShuffleDialog(me, getString(R.string.clear_queue_confirm)) {
+            clearQueue()
+        }
     }
 }

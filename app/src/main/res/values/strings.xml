@@ -82,6 +82,8 @@
     <string name="play_next">Play next</string>
     <string name="remove_from_queue">Remove from queue</string>
     <string name="create_playlist_from_queue">Create playlist from queue</string>
+    <string name="clear_queue">Clear queue</string>
+    <string name="clear_queue_confirm">Are you sure you want to clear the queue</string>
     <!-- Settings -->
     <string name="equalizer">Equalizer</string>
     <string name="shuffle_confirm">Are you sure you want to replace the current queue with the shuffle?</string>
