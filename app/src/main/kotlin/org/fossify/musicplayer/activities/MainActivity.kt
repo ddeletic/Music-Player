@@ -693,7 +693,7 @@ class MainActivity : SimpleMusicActivity() {
         var me = this
         withPlayer {
             if (mediaItemCount > 0) {
-                ShuffleDialog(me, getString(R.string.shuffle_confirm)) {
+                YesNoDialog(me, R.string.shuffle, getString(R.string.shuffle_confirm)) {
                     toast("Shuffling")
                     ensureBackgroundThread {
                         getCurrentFragment()?.onShuffle(me)
@@ -773,8 +773,12 @@ class MainActivity : SimpleMusicActivity() {
 
     private fun confirmAndClearQueue() {
         var me = this
-        ShuffleDialog(me, getString(R.string.clear_queue_confirm)) {
-            clearQueue()
+        withPlayer {
+            if (mediaItemCount > 0) {
+                YesNoDialog(me, R.string.clear_queue, getString(R.string.clear_queue_confirm)) {
+                    clearQueue()
+                }
+            }
         }
     }
 }
