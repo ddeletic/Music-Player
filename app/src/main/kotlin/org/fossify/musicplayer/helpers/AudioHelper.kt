@@ -262,8 +262,10 @@ class AudioHelper(private val context: Context) {
         ensureBackgroundThread {
             var queueItems = context.queueDAO.getAll()
             if (queueItems.isEmpty()) {
-                initQueue()
-                queueItems = context.queueDAO.getAll()
+//                initQueue()
+//                queueItems = context.queueDAO.getAll()
+                callback(emptyList(), 0, 0)
+                return@ensureBackgroundThread
             }
 
             val currentItem = context.queueDAO.getCurrent()
@@ -297,6 +299,10 @@ class AudioHelper(private val context: Context) {
 
         resetQueue(queueItems)
         return tracks
+    }
+
+    fun clearQueue() {
+        context.queueDAO.deleteAllItems()
     }
 
     fun resetQueue(items: List<QueueItem>, currentTrackId: Long? = null, startPosition: Long? = null) {

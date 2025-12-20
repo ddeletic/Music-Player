@@ -2,7 +2,9 @@ package org.fossify.musicplayer.activities
 
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
@@ -19,9 +21,11 @@ import org.fossify.musicplayer.R
 import org.fossify.musicplayer.adapters.QueueAdapter
 import org.fossify.musicplayer.databinding.ActivityQueueBinding
 import org.fossify.musicplayer.dialogs.NewPlaylistDialog
+import org.fossify.musicplayer.dialogs.YesNoDialog
 import org.fossify.musicplayer.extensions.*
 import org.fossify.musicplayer.helpers.RoomHelper
 import org.fossify.musicplayer.models.Track
+import org.fossify.musicplayer.playback.PlaybackService.Companion.updatePlaybackInfo
 
 class QueueActivity : SimpleControllerActivity() {
     private var searchMenuItem: MenuItem? = null
@@ -64,6 +68,7 @@ class QueueActivity : SimpleControllerActivity() {
         binding.queueToolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.create_playlist_from_queue -> createPlaylistFromQueue()
+                R.id.clear_queue -> confirmAndClearQueue()
                 else -> return@setOnMenuItemClickListener false
             }
             return@setOnMenuItemClickListener true
@@ -169,6 +174,21 @@ class QueueActivity : SimpleControllerActivity() {
 
             ensureBackgroundThread {
                 RoomHelper(this).insertTracksWithPlaylist(tracks)
+            }
+        }
+    }
+
+    private fun confirmAndClearQueue() {
+        var me = this
+        withPlayer {
+            if (mediaItemCount > 0) {
+                YesNoDialog(me, R.string.clear_queue, getString(R.string.clear_queue_confirm)) {
+                    clearQueue() {
+                        Intent(me, MainActivity::class.java).apply {
+                            startActivity(this)
+                        }
+                    }
+                }
             }
         }
     }

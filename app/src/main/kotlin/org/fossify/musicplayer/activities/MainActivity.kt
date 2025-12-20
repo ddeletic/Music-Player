@@ -78,6 +78,7 @@ class MainActivity : SimpleMusicActivity() {
                 }
             }
         )
+
         storeStateVariables()
         setupTabs()
         setupCurrentTrackBar(binding.currentTrackBar.root)
@@ -100,7 +101,7 @@ class MainActivity : SimpleMusicActivity() {
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        checkWhatsNewDialog()
+//        checkWhatsNewDialog()
         checkAppOnSDCard()
 
         restoreQueue()
@@ -181,13 +182,13 @@ class MainActivity : SimpleMusicActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-        bus?.unregister(this)
-
         withPlayer {
             stop()
         }
         saveQueue()
+        super.onDestroy()
+        bus?.unregister(this)
+
         startBluetoothService(false)        // This notifies the service that the aap has stopped
     }
 
@@ -223,7 +224,7 @@ class MainActivity : SimpleMusicActivity() {
         }
     }
 
-    private fun saveQueue() {
+    private fun saveQueue(force: Boolean = false) {
         withPlayer {
             val queueInfo = QueueInfo (
                 currentIndex = currentMediaItemIndex,
@@ -231,8 +232,8 @@ class MainActivity : SimpleMusicActivity() {
                 mediaIds = currentMediaItems.map { it.mediaId.toLong() }
             )
 
-            val numTracks =queueInfo.mediaIds.count()
-            if (numTracks > 1) {
+            val numTracks = queueInfo.mediaIds.count()
+            if ((force == true) || (numTracks > 1)) {
                 Log.i("ddd", "Saving the queue. $numTracks songs")
                 val gson = Gson()
                 val json = gson.toJson(queueInfo)
@@ -777,6 +778,7 @@ class MainActivity : SimpleMusicActivity() {
             if (mediaItemCount > 0) {
                 YesNoDialog(me, R.string.clear_queue, getString(R.string.clear_queue_confirm)) {
                     clearQueue()
+                    saveQueue(true)
                 }
             }
         }
