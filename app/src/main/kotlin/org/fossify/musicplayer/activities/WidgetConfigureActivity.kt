@@ -67,20 +67,20 @@ class WidgetConfigureActivity : SimpleActivity() {
             }
         }
 
-        if (!isCustomizingColors && !isOrWasThankYouInstalled()) {
-            mFeatureLockedDialog = FeatureLockedDialog(this) {
-                if (!isOrWasThankYouInstalled()) {
-                    finish()
-                }
-            }
-        }
+//        if (!isCustomizingColors && !isOrWasThankYouInstalled()) {
+//            mFeatureLockedDialog = FeatureLockedDialog(this) {
+//                if (!isOrWasThankYouInstalled()) {
+//                    finish()
+//                }
+//            }
+//        }
     }
 
     override fun onResume() {
         super.onResume()
-        if (mFeatureLockedDialog != null && isOrWasThankYouInstalled()) {
-            mFeatureLockedDialog?.dismissDialog()
-        }
+//        if (mFeatureLockedDialog != null && isOrWasThankYouInstalled()) {
+//            mFeatureLockedDialog?.dismissDialog()
+//        }
     }
 
     private fun initVariables() {
