@@ -13,7 +13,7 @@ import org.fossify.commons.extensions.applyColorFilter
 import org.fossify.commons.extensions.getContrastColor
 import org.fossify.commons.extensions.getProperPrimaryColor
 import org.fossify.commons.extensions.isDynamicTheme
-import org.fossify.commons.extensions.isOrWasThankYouInstalled
+//import org.fossify.commons.extensions.isOrWasThankYouInstalled
 import org.fossify.commons.extensions.onSeekBarChangeListener
 import org.fossify.commons.extensions.setFillWithStroke
 import org.fossify.commons.extensions.viewBinding
@@ -21,6 +21,8 @@ import org.fossify.commons.helpers.IS_CUSTOMIZING_COLORS
 import org.fossify.musicplayer.R
 import org.fossify.musicplayer.databinding.WidgetConfigBinding
 import org.fossify.musicplayer.extensions.config
+import org.fossify.musicplayer.extensions.loadTrackCoverArt
+import org.fossify.musicplayer.extensions.toTrack
 import org.fossify.musicplayer.helpers.MyWidgetProvider
 import org.fossify.musicplayer.playback.PlaybackService
 
@@ -59,11 +61,26 @@ class WidgetConfigureActivity : SimpleActivity() {
         binding.configPlayer.apply {
             val currSong = PlaybackService.currentMediaItem?.mediaMetadata
             if (currSong != null) {
-                songInfoTitle.text = currSong.title
-                songInfoArtist.text = currSong.artist
+                widgetSongTitle.text = currSong.title
+                val artist = currSong.artist
+                val album = currSong.albumTitle
+                widgetArtistAlbum.text = if (!artist.isNullOrEmpty() && !album.isNullOrEmpty()) {
+                    "$artist :: $album"
+                } else {
+                    artist ?: album ?: ""
+                }
+
+                val track = PlaybackService.currentMediaItem?.toTrack()
+                val bitmap = loadTrackCoverArt(track)
+                if (bitmap != null) {
+                    widgetAlbumCover.setImageBitmap(bitmap)
+                } else {
+                    widgetAlbumCover.setImageResource(R.drawable.ic_music_note_vector)
+                }
             } else {
-                songInfoTitle.text = getString(org.fossify.commons.R.string.artist)
-                songInfoArtist.text = getString(org.fossify.commons.R.string.song_title)
+                widgetSongTitle.text = getString(org.fossify.commons.R.string.song_title)
+                widgetArtistAlbum.text = "${getString(org.fossify.commons.R.string.artist)} :: ${getString(org.fossify.commons.R.string.album)}"
+                widgetAlbumCover.setImageResource(R.drawable.ic_music_note_vector)
             }
         }
 
@@ -158,13 +175,14 @@ class WidgetConfigureActivity : SimpleActivity() {
     private fun updateTextColor() = binding.apply {
         configTextColor.setFillWithStroke(mTextColor, mTextColor)
 
-        configPlayer.songInfoTitle.setTextColor(mTextColor)
-        configPlayer.songInfoArtist.setTextColor(mTextColor)
+        configPlayer.widgetSongTitle.setTextColor(mTextColor)
+        configPlayer.widgetArtistAlbum.setTextColor(mTextColor)
         configSave.setTextColor(getProperPrimaryColor().getContrastColor())
 
-        configPlayer.widgetControls.previousBtn.drawable.applyColorFilter(mTextColor)
-        configPlayer.widgetControls.playPauseBtn.drawable.applyColorFilter(mTextColor)
-        configPlayer.widgetControls.nextBtn.drawable.applyColorFilter(mTextColor)
+        configPlayer.previousBtn.drawable.applyColorFilter(mTextColor)
+        configPlayer.playPauseBtn.drawable.applyColorFilter(mTextColor)
+        configPlayer.nextBtn.drawable.applyColorFilter(mTextColor)
+        configPlayer.widgetAlbumCover.drawable.applyColorFilter(mTextColor)
     }
 
     private fun pickBackgroundColor() {

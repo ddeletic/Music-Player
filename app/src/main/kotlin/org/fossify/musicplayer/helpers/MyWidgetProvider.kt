@@ -17,7 +17,9 @@ import org.fossify.commons.extensions.getLaunchIntent
 import org.fossify.musicplayer.R
 import org.fossify.musicplayer.activities.SplashActivity
 import org.fossify.musicplayer.extensions.config
+import org.fossify.musicplayer.extensions.loadTrackCoverArt
 import org.fossify.musicplayer.extensions.maybePreparePlayer
+import org.fossify.musicplayer.extensions.toTrack
 import org.fossify.musicplayer.extensions.togglePlayback
 import org.fossify.musicplayer.playback.PlaybackService
 
@@ -33,7 +35,7 @@ class MyWidgetProvider : AppWidgetProvider() {
             val views = getRemoteViews(appWidgetManager, context, it)
             updateColors(context, views)
             setupButtons(context, views)
-            updateSongInfo(views, PlaybackService.currentMediaItem?.mediaMetadata)
+            updateSongInfo(context, views, PlaybackService.currentMediaItem?.mediaMetadata)
             updatePlayPauseButton(context, views, PlaybackService.isPlaying)
             appWidgetManager.updateAppWidget(it, views)
         }
@@ -97,10 +99,29 @@ class MyWidgetProvider : AppWidgetProvider() {
         views.setOnClickPendingIntent(id, pendingIntent)
     }
 
-    private fun updateSongInfo(views: RemoteViews, currSong: MediaMetadata?) {
+    private fun updateSongInfo(context: Context, views: RemoteViews, currSong: MediaMetadata?) {
+        val track = PlaybackService.currentMediaItem?.toTrack()
+        val bitmap = context.loadTrackCoverArt(track)
+        if (bitmap != null) {
+            views.setImageViewBitmap(R.id.widget_album_cover, bitmap)
+        } else {
+            val placeholder = context.resources.getColoredBitmap(R.drawable.ic_music_note_vector, context.config.widgetTextColor)
+            views.setImageViewBitmap(R.id.widget_album_cover, placeholder)
+        }
+
         if (currSong != null) {
-            views.setTextViewText(R.id.song_info_title, currSong.title)
-            views.setTextViewText(R.id.song_info_artist, currSong.artist)
+            views.setTextViewText(R.id.widget_song_title, currSong.title)
+            val artist = currSong.artist
+            val album = currSong.albumTitle
+            val artistAlbum = if (!artist.isNullOrEmpty() && !album.isNullOrEmpty()) {
+                "$artist :: $album"
+            } else {
+                artist ?: album ?: ""
+            }
+            views.setTextViewText(R.id.widget_artist_album, artistAlbum.toString())
+        } else {
+            views.setTextViewText(R.id.widget_song_title, context.getString(org.fossify.commons.R.string.song_title))
+            views.setTextViewText(R.id.widget_artist_album, "${context.getString(org.fossify.commons.R.string.artist)} :: ${context.getString(org.fossify.commons.R.string.album)}")
         }
     }
 
@@ -118,8 +139,8 @@ class MyWidgetProvider : AppWidgetProvider() {
 
         views.apply {
             applyColorFilter(R.id.widget_background, widgetBgColor)
-            setTextColor(R.id.song_info_title, widgetTextColor)
-            setTextColor(R.id.song_info_artist, widgetTextColor)
+            setTextColor(R.id.widget_song_title, widgetTextColor)
+            setTextColor(R.id.widget_artist_album, widgetTextColor)
             setImageViewBitmap(
                 R.id.previous_btn,
                 context.resources.getColoredBitmap(
@@ -136,8 +157,9 @@ class MyWidgetProvider : AppWidgetProvider() {
         setupIntent(context, views, PLAYPAUSE, R.id.play_pause_btn)
         setupIntent(context, views, NEXT, R.id.next_btn)
 
-        setupAppOpenIntent(context, views, R.id.song_info_title)
-        setupAppOpenIntent(context, views, R.id.song_info_artist)
+        setupAppOpenIntent(context, views, R.id.widget_song_title)
+        setupAppOpenIntent(context, views, R.id.widget_artist_album)
+        setupAppOpenIntent(context, views, R.id.widget_album_cover)
     }
 
     private fun getRemoteViews(appWidgetManager: AppWidgetManager, context: Context, widgetId: Int): RemoteViews {
