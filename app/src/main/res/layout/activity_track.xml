@@ -121,11 +121,30 @@
             android:paddingEnd="@dimen/activity_margin"
             android:scrollHorizontally="true"
             android:textSize="@dimen/extra_big_text_size"
-            app:layout_constraintBottom_toTopOf="@+id/activity_track_artist"
+            app:layout_constraintBottom_toTopOf="@+id/activity_track_album"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_track_progress_current"
             tools:text="Track title" />
+
+        <org.fossify.musicplayer.views.MarqueeTextView
+            android:id="@+id/activity_track_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="800dp"
+            android:fadingEdge="horizontal"
+            android:gravity="center"
+            android:paddingStart="@dimen/activity_margin"
+            android:paddingEnd="@dimen/activity_margin"
+            android:scrollHorizontally="true"
+            android:textSize="@dimen/actionbar_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/activity_track_artist"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_track_progress_current"
+            app:layout_constraintVertical_bias="1.0"
+            tools:text="Album title" />
 
         <org.fossify.musicplayer.views.MarqueeTextView
             android:id="@+id/activity_track_artist"

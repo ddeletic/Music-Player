@@ -122,6 +122,7 @@ class TrackActivity : SimpleControllerActivity(), PlaybackSpeedListener {
         super.onResume()
         updateTextColors(binding.activityTrackHolder)
         binding.activityTrackTitle.setTextColor(getProperTextColor())
+        binding.activityTrackAlbum.setTextColor(getProperTextColor())
         binding.activityTrackArtist.setTextColor(getProperTextColor())
         updatePlayerState()
         updateTrackInfo()
@@ -155,9 +156,15 @@ class TrackActivity : SimpleControllerActivity(), PlaybackSpeedListener {
         setupTopArt(track)
         binding.apply {
             activityTrackTitle.text = track.title
+            activityTrackAlbum.text = track.album
             activityTrackArtist.text = track.artist
             activityTrackTitle.setOnLongClickListener {
                 copyToClipboard(activityTrackTitle.value)
+                true
+            }
+
+            activityTrackAlbum.setOnLongClickListener {
+                copyToClipboard(activityTrackAlbum.value)
                 true
             }
 
