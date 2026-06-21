@@ -30,9 +30,8 @@ class TracksFragment(context: Context, attributeSet: AttributeSet) : MyViewPager
         ensureBackgroundThread {
             tracks = context.audioHelper.getAllTracks()
 
-            val excludedFolders = context.config.excludedFolders
             tracks = tracks.filter {
-                !excludedFolders.contains(it.path.getParentPath())
+                context.config.isPathIncluded(it.path)
             }.toMutableList() as ArrayList<Track>
 
             activity.runOnUiThread {

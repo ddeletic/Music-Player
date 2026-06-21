@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="AppCompatResource,AlwaysShowAction">
     <item
-        android:id="@+id/cab_exclude_folders"
+        android:id="@+id/cab_remove_from_whitelist"
         android:icon="@drawable/ic_minus_circle_vector"
         android:showAsAction="always"
-        android:title="@string/exclude_folder"
+        android:title="@string/remove_from_whitelist"
         app:showAsAction="always" />
     <item
         android:id="@+id/cab_share"

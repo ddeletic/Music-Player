@@ -43,7 +43,7 @@ class SettingsActivity : SimpleControllerActivity() {
         setupPlayOnBluetooth()
         setupUseEnglish()
         setupLanguage()
-        setupManageExcludedFolders()
+        setupManageIncludedFolders()
         setupManageShownTabs()
         setupSwapPrevNext()
         setupReplaceTitle()
@@ -156,9 +156,9 @@ class SettingsActivity : SimpleControllerActivity() {
         }
     }
 
-    private fun setupManageExcludedFolders() {
-        binding.settingsManageExcludedFoldersHolder.setOnClickListener {
-            startActivity(Intent(this, ExcludedFoldersActivity::class.java))
+    private fun setupManageIncludedFolders() {
+        binding.settingsManageIncludedFoldersHolder.setOnClickListener {
+            startActivity(Intent(this, IncludedFoldersActivity::class.java))
         }
     }
 }

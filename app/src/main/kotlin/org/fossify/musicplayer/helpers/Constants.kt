@@ -65,7 +65,7 @@ const val SHOW_TABS = "show_tabs"
 const val WAS_ALL_TRACKS_PLAYLIST_CREATED = "was_all_tracks_playlist_created"
 const val TRACKS_REMOVED_FROM_ALL_TRACKS_PLAYLIST = "tracks_removed_from_all_tracks_playlist"
 const val LAST_EXPORT_PATH = "last_export_path"
-const val EXCLUDED_FOLDERS = "excluded_folders"
+const val INCLUDED_FOLDERS = "included_folders"
 const val SORT_PLAYLIST_PREFIX = "sort_playlist_"
 
 const val SEEK_INTERVAL_MS = 10000L

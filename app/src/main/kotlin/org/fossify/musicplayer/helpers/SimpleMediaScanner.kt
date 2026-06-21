@@ -100,13 +100,12 @@ class SimpleMediaScanner(private val context: Application) {
         mediaStorePaths += newTracks.map { it.path }
         assignGenreToTracks()
 
-        // ignore tracks from excluded folders and tracks with no albums, artists
+        // ignore tracks from non-included folders and tracks with no albums, artists
         val albumIds = newAlbums.map { it.id }
         val artistIds = newArtists.map { it.id }
-        val excludedFolders = config.excludedFolders
         val tracksToExclude = mutableSetOf<Track>()
         for (track in newTracks) {
-            if (track.path.getParentPath() in excludedFolders) {
+            if (!config.isPathIncluded(track.path)) {
                 tracksToExclude.add(track)
                 continue
             }
@@ -194,10 +193,9 @@ class SimpleMediaScanner(private val context: Application) {
         }
 
         // avoid re-adding tracks that have been explicitly removed from 'All tracks' playlist
-        val excludedFolders = config.excludedFolders
         val tracksRemovedFromAllTracks = config.tracksRemovedFromAllTracksPlaylist.map { it.toLong() }
         val tracksWithPlaylist = newTracks
-            .filter { it.mediaStoreId !in tracksRemovedFromAllTracks && it.playListId == 0 && it.path.getParentPath() !in excludedFolders }
+            .filter { it.mediaStoreId !in tracksRemovedFromAllTracks && it.playListId == 0 && config.isPathIncluded(it.path) }
             .onEach { it.playListId = ALL_TRACKS_PLAYLIST_ID }
         RoomHelper(context).insertTracksWithPlaylist(tracksWithPlaylist as ArrayList<Track>)
     }
@@ -407,15 +405,15 @@ class SimpleMediaScanner(private val context: Application) {
 
     private fun findTracksManually(pathsToIgnore: List<String>): ArrayList<Track> {
         val audioFilePaths = arrayListOf<String>()
-        val excludedPaths = pathsToIgnore.toMutableList().apply { addAll(0, config.excludedFolders) }
+        val includedFolders = config.includedFolders
 
-        for (rootPath in arrayOf(context.internalStoragePath, context.sdCardPath)) {
+        for (rootPath in includedFolders) {
             if (rootPath.isEmpty()) {
                 continue
             }
 
             val rootFile = File(rootPath)
-            findAudioFiles(rootFile, audioFilePaths, excludedPaths)
+            findAudioFiles(rootFile, audioFilePaths, pathsToIgnore)
         }
 
         if (audioFilePaths.isEmpty()) {
@@ -489,13 +487,13 @@ class SimpleMediaScanner(private val context: Application) {
         return tracks
     }
 
-    private fun findAudioFiles(file: File, destination: ArrayList<String>, excludedPaths: MutableList<String>) {
+    private fun findAudioFiles(file: File, destination: ArrayList<String>, pathsToIgnore: List<String>) {
         if (file.isHidden) {
             return
         }
 
         val path = file.absolutePath
-        if (path in excludedPaths || path.getParentPath() in excludedPaths) {
+        if (path in pathsToIgnore) {
             return
         }
 
@@ -505,7 +503,7 @@ class SimpleMediaScanner(private val context: Application) {
             }
         } else if (!file.containsNoMedia()) {
             file.listFiles().orEmpty().forEach { child ->
-                findAudioFiles(child, destination, excludedPaths)
+                findAudioFiles(child, destination, pathsToIgnore)
             }
         }
     }

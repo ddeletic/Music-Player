@@ -2,6 +2,7 @@ package org.fossify.musicplayer.adapters
 
 import android.annotation.SuppressLint
 import android.view.*
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.PopupMenu
 import org.fossify.commons.activities.BaseSimpleActivity
 import org.fossify.commons.adapters.MyRecyclerViewAdapter
@@ -11,10 +12,10 @@ import org.fossify.commons.extensions.humanizePath
 import org.fossify.commons.extensions.setupViewBackground
 import org.fossify.commons.interfaces.RefreshRecyclerViewListener
 import org.fossify.commons.views.MyRecyclerView
-import org.fossify.musicplayer.databinding.ItemExcludedFolderBinding
+import org.fossify.musicplayer.databinding.ItemIncludedFolderBinding
 import org.fossify.musicplayer.extensions.config
 
-class ExcludedFoldersAdapter(
+class IncludedFoldersAdapter(
     activity: BaseSimpleActivity,
     var folders: ArrayList<String>,
     val listener: RefreshRecyclerViewListener?,
@@ -51,7 +52,7 @@ class ExcludedFoldersAdapter(
     override fun onActionModeDestroyed() {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemExcludedFolderBinding.inflate(layoutInflater, parent, false)
+        val binding = ItemIncludedFolderBinding.inflate(layoutInflater, parent, false)
         return createViewHolder(binding.root)
     }
 
@@ -68,10 +69,10 @@ class ExcludedFoldersAdapter(
     private fun getSelectedItems() = folders.filter { selectedKeys.contains(it.hashCode()) } as ArrayList<String>
 
     private fun setupView(view: View, folder: String) {
-        ItemExcludedFolderBinding.bind(view).apply {
+        ItemIncludedFolderBinding.bind(view).apply {
             root.setupViewBackground(activity)
-            excludedFolderHolder.isSelected = selectedKeys.contains(folder.hashCode())
-            excludedFolderTitle.apply {
+            includedFolderHolder.isSelected = selectedKeys.contains(folder.hashCode())
+            includedFolderTitle.apply {
                 @SuppressLint("SetTextI18n")
                 text = context.humanizePath(folder) + "/"
                 setTextColor(context.getProperTextColor())
@@ -122,7 +123,7 @@ class ExcludedFoldersAdapter(
 
         getSelectedItems().forEach {
             removeFolders.add(it)
-            config.removeExcludedFolder(it)
+            config.removeIncludedFolder(it)
         }
 
         folders.removeAll(removeFolders)

@@ -55,7 +55,7 @@ class MainActivity : SimpleMusicActivity() {
 
     private var bus: EventBus? = null
     private var storedShowTabs = 0
-    private var storedExcludedFolders = 0
+    private var storedIncludedFolders = 0
 
     override var isSearchBarEnabled = true
 
@@ -149,7 +149,7 @@ class MainActivity : SimpleMusicActivity() {
             it.setupColors(properTextColor, properPrimaryColor)
         }
 
-        if (storedExcludedFolders != config.excludedFolders.hashCode()) {
+        if (storedIncludedFolders != config.includedFolders.hashCode()) {
             refreshAllFragments()
         }
 
@@ -344,7 +344,7 @@ class MainActivity : SimpleMusicActivity() {
     private fun storeStateVariables() {
         config.apply {
             storedShowTabs = showTabs
-            storedExcludedFolders = config.excludedFolders.hashCode()
+            storedIncludedFolders = config.includedFolders.hashCode()
         }
     }
 

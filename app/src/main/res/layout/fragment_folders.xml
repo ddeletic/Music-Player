@@ -28,7 +28,7 @@
         android:background="@drawable/ripple_all_corners"
         android:gravity="center"
         android:padding="@dimen/activity_margin"
-        android:text="@string/manage_excluded_folders"
+        android:text="@string/manage_included_folders"
         android:textSize="@dimen/bigger_text_size" />
 
     <com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller

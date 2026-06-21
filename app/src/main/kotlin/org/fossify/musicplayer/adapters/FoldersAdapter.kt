@@ -37,14 +37,14 @@ class FoldersAdapter(
 
     override fun actionItemPressed(id: Int) {
         when (id) {
-            R.id.cab_exclude_folders -> excludeFolders()
+            R.id.cab_remove_from_whitelist -> removeFromWhitelist()
             R.id.cab_share -> shareFiles()
         }
     }
 
-    private fun excludeFolders() {
+    private fun removeFromWhitelist() {
         getSelectedItems().forEach {
-            context.config.addExcludedFolder(it.path)
+            context.config.removeIncludedFolder(it.path)
         }
 
         finishActMode()

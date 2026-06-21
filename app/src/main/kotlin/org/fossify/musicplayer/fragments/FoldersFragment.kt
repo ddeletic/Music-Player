@@ -7,7 +7,7 @@ import org.fossify.commons.activities.BaseSimpleActivity
 import org.fossify.commons.extensions.*
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.musicplayer.R
-import org.fossify.musicplayer.activities.ExcludedFoldersActivity
+import org.fossify.musicplayer.activities.IncludedFoldersActivity
 import org.fossify.musicplayer.activities.SimpleActivity
 import org.fossify.musicplayer.activities.TracksActivity
 import org.fossify.musicplayer.adapters.FoldersAdapter
@@ -39,11 +39,11 @@ class FoldersFragment(context: Context, attributeSet: AttributeSet) : MyViewPage
                 }
                 binding.foldersPlaceholder.beVisibleIf(folders.isEmpty())
                 binding.foldersFastscroller.beGoneIf(binding.foldersPlaceholder.isVisible())
-                binding.foldersPlaceholder2.beVisibleIf(folders.isEmpty() && context.config.excludedFolders.isNotEmpty() && !scanning)
+                binding.foldersPlaceholder2.beVisibleIf(folders.isEmpty() && context.config.includedFolders.isNotEmpty() && !scanning)
                 binding.foldersPlaceholder2.underlineText()
 
                 binding.foldersPlaceholder2.setOnClickListener {
-                    activity.startActivity(Intent(activity, ExcludedFoldersActivity::class.java))
+                    activity.startActivity(Intent(activity, IncludedFoldersActivity::class.java))
                 }
 
                 this.folders = folders

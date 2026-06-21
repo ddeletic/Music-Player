@@ -34,10 +34,9 @@ class AudioHelper(private val context: Context) {
         val tracks = context.audioHelper.getAllTracks()
         val foldersMap = tracks.groupBy { it.folderName }
         val folders = ArrayList<Folder>()
-        val excludedFolders = config.excludedFolders
         for ((title, folderTracks) in foldersMap) {
             val path = (folderTracks.firstOrNull()?.path?.getParentPath() ?: "").removeSuffix("/")
-            if (excludedFolders.contains(path)) {
+            if (!config.isPathIncluded(path)) {
                 continue
             }
 

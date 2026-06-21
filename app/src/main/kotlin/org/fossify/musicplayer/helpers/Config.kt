@@ -1,6 +1,7 @@
 package org.fossify.musicplayer.helpers
 
 import android.content.Context
+import org.fossify.commons.extensions.internalStoragePath
 import org.fossify.commons.helpers.BaseConfig
 
 class Config(context: Context) : BaseConfig(context) {
@@ -126,23 +127,30 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getInt(SHOW_TABS, ALL_TABS_MASK)
         set(showTabs) = prefs.edit().putInt(SHOW_TABS, showTabs).apply()
 
-    var excludedFolders: MutableSet<String>
-        get() = prefs.getStringSet(EXCLUDED_FOLDERS, HashSet())!!
-        set(excludedFolders) = prefs.edit().remove(EXCLUDED_FOLDERS).putStringSet(EXCLUDED_FOLDERS, excludedFolders).apply()
+    var includedFolders: MutableSet<String>
+        get() = prefs.getStringSet(INCLUDED_FOLDERS, hashSetOf("${context.internalStoragePath}/Music"))!!
+        set(includedFolders) = prefs.edit().remove(INCLUDED_FOLDERS).putStringSet(INCLUDED_FOLDERS, includedFolders).apply()
 
-    fun addExcludedFolder(path: String) {
-        addExcludedFolders(HashSet(listOf(path)))
+    fun addIncludedFolder(path: String) {
+        addIncludedFolders(HashSet(listOf(path)))
     }
 
-    fun addExcludedFolders(paths: Set<String>) {
-        val currExcludedFolders = HashSet(excludedFolders)
-        currExcludedFolders.addAll(paths.map { it.removeSuffix("/") })
-        excludedFolders = currExcludedFolders.filter { it.isNotEmpty() }.toHashSet()
+    fun addIncludedFolders(paths: Set<String>) {
+        val currIncludedFolders = HashSet(includedFolders)
+        currIncludedFolders.addAll(paths.map { it.removeSuffix("/") })
+        includedFolders = currIncludedFolders.filter { it.isNotEmpty() }.toHashSet()
     }
 
-    fun removeExcludedFolder(path: String) {
-        val currExcludedFolders = HashSet(excludedFolders)
-        currExcludedFolders.remove(path)
-        excludedFolders = currExcludedFolders
+    fun removeIncludedFolder(path: String) {
+        val currIncludedFolders = HashSet(includedFolders)
+        currIncludedFolders.remove(path)
+        includedFolders = currIncludedFolders
+    }
+
+    fun isPathIncluded(path: String): Boolean {
+        val folders = includedFolders
+        return folders.any {
+            path.equals(it, ignoreCase = true) || path.startsWith("$it/", ignoreCase = true)
+        }
     }
 }
