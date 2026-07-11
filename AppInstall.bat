@@ -1,9 +1,10 @@
 @echo off
 set MY_DIR=%~dp0
-cd %MY_DIR%\app\build\outputs\apk\core\release\
+::set APK_DIR=app\core\release
+set APK_DIR=app\build\outputs\apk\core\release
+cd %MY_DIR%\%APK_DIR%\
 
 
-::adb install .\musicplayer-4-core-release.apk
 
 
 
@@ -15,9 +16,10 @@ echo No *.apk file found!
 goto :end
 
 :FoundHexFile
-echo Installing "<root>\app\build\outputs\apk\core\release\%APK_FILE%"
+echo Installing "<root>\%APK_DIR%\%APK_FILE%"
 adb install .\%APK_FILE%
 
 
 :end
+cd %MY_DIR%
 pause
