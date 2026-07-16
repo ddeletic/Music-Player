@@ -7,13 +7,13 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.MediaStore
 import android.util.Size
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.SeekBar
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.scale
+import androidx.core.graphics.ColorUtils
 import androidx.core.os.postDelayed
 import androidx.core.view.GestureDetectorCompat
 import androidx.media3.common.MediaItem
@@ -25,20 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.fossify.commons.extensions.applyColorFilter
-import org.fossify.commons.extensions.beGone
-import org.fossify.commons.extensions.beVisible
-import org.fossify.commons.extensions.copyToClipboard
-import org.fossify.commons.extensions.getColoredDrawableWithColor
-import org.fossify.commons.extensions.getFormattedDuration
-import org.fossify.commons.extensions.getProperBackgroundColor
-import org.fossify.commons.extensions.getProperPrimaryColor
-import org.fossify.commons.extensions.getProperTextColor
-import org.fossify.commons.extensions.realScreenSize
-import org.fossify.commons.extensions.toast
-import org.fossify.commons.extensions.updateTextColors
-import org.fossify.commons.extensions.value
-import org.fossify.commons.extensions.viewBinding
+import org.fossify.commons.extensions.*
 import org.fossify.commons.helpers.MEDIUM_ALPHA
 import org.fossify.musicplayer.R
 import org.fossify.musicplayer.databinding.ActivityTrackBinding
@@ -97,7 +84,7 @@ class TrackActivity : SimpleControllerActivity(), PlaybackSpeedListener {
 
         binding.apply {
             activityTrackToolbar.setNavigationOnClickListener { finish() }
-            nextTrackHolder.background = getProperBackgroundColor().toDrawable()
+            updateNextTrackBackgroundColor()
             nextTrackHolder.setOnClickListener {
                 startActivity(Intent(applicationContext, QueueActivity::class.java))
             }
@@ -124,8 +111,21 @@ class TrackActivity : SimpleControllerActivity(), PlaybackSpeedListener {
         binding.activityTrackTitle.setTextColor(getProperTextColor())
         binding.activityTrackAlbum.setTextColor(getProperTextColor())
         binding.activityTrackArtist.setTextColor(getProperTextColor())
+        updateNextTrackBackgroundColor()
         updatePlayerState()
         updateTrackInfo()
+    }
+
+    private fun updateNextTrackBackgroundColor() {
+        val backgroundColor = getProperBackgroundColor()
+        val bottomNavColor = getBottomNavigationBackgroundColor()
+        val mixedColor = ColorUtils.blendARGB(backgroundColor, bottomNavColor, 0.5f)
+        binding.nextTrackHolder.background = mixedColor.toDrawable()
+
+        val textColor = getProperTextColor()
+        binding.nextTrackTitle.setTextColor(textColor)
+        binding.nextTrackAlbum.setTextColor(textColor)
+        binding.nextTrackArtist.setTextColor(textColor)
     }
 
     override fun onPause() {
@@ -217,21 +217,15 @@ class TrackActivity : SimpleControllerActivity(), PlaybackSpeedListener {
         }
 
         binding.nextTrackHolder.beVisible()
-        val artist =
-            if (track.artist.trim().isNotEmpty() && track.artist != MediaStore.UNKNOWN_STRING) {
-                " • ${track.artist}"
-            } else {
-                ""
-            }
-
-        @SuppressLint("SetTextI18n")
-        binding.nextTrackLabel.text = "${getString(R.string.next_track)} ${track.title}$artist"
+        binding.nextTrackTitle.text = String.format("%s: %s", getString(R.string.next_track), track.title)
+        binding.nextTrackAlbum.text = track.album
+        binding.nextTrackArtist.text = track.artist
 
         getTrackCoverArt(track) { coverArt ->
             val cornerRadius =
                 resources.getDimension(org.fossify.commons.R.dimen.rounded_corner_radius_small)
                     .toInt()
-            val wantedSize = resources.getDimension(R.dimen.song_image_size).toInt()
+            val wantedSize = resources.getDimension(R.dimen.artist_image_size).toInt()
 
             // change cover image manually only once loaded successfully to avoid blinking at fails and placeholders
             loadGlideResource(
