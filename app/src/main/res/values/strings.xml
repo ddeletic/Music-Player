@@ -76,6 +76,7 @@
     <!-- %1 is disc number, %2 is track number -->
     <string name="track_on_disk">%1$d.%2$s</string>
     <!-- Queue -->
+    <string name="queue">Queue</string>
     <string name="next_track">Next:</string>
     <string name="track_queue">Track queue</string>
     <string name="add_to_queue">Add to queue</string>

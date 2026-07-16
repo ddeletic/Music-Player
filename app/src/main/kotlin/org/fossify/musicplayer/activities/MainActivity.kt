@@ -47,8 +47,10 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.CallSuper
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.PopupMenu
+import androidx.media3.common.MediaItem
 
 class MainActivity : SimpleMusicActivity() {
     data class QueueInfo (
@@ -289,6 +291,28 @@ class MainActivity : SimpleMusicActivity() {
         }
     }
 
+    @CallSuper
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+        super.onMediaItemTransition(mediaItem, reason)
+        getAllFragments().forEach {
+            it.updateCurrentTrack()
+        }
+    }
+
+    override fun onTimelineChanged(timeline: androidx.media3.common.Timeline, reason: Int) {
+        super.onTimelineChanged(timeline, reason)
+        getAllFragments().forEach {
+            it.onTimelineChanged()
+        }
+    }
+
+    override fun onPlayerPrepared(success: Boolean) {
+        super.onPlayerPrepared(success)
+        getAllFragments().forEach {
+            it.onTimelineChanged()
+        }
+    }
+
     private fun refreshMenuItems(position: Int = binding.viewPager.currentItem) {
         binding.mainMenu.requireToolbar().menu.apply {
             setupMenuVisibility(this, position)
@@ -298,14 +322,16 @@ class MainActivity : SimpleMusicActivity() {
     private fun setupMenuVisibility(menu: Menu, position: Int) {
         val tab = getVisibleTabs()[position]
         val isPlaylistFragment = tab == TAB_PLAYLISTS
+        val isQueueFragment = tab == TAB_QUEUE
         menu.findItem(R.id.create_new_playlist)?.isVisible = isPlaylistFragment
         menu.findItem(R.id.create_playlist_from_folder)?.isVisible = isPlaylistFragment
         menu.findItem(R.id.import_playlist)?.isVisible = isPlaylistFragment
+        menu.findItem(R.id.clear_queue)?.isVisible = isQueueFragment
         menu.findItem(R.id.more_apps_from_us)?.isVisible = !resources.getBoolean(org.fossify.commons.R.bool.hide_google_relations)
         var isShuffleable = true
 
         val currentFragment = getCurrentFragment()
-        if ((currentFragment is GenresFragment) or (currentFragment is FoldersFragment) or isPlaylistFragment) {
+        if ((currentFragment is GenresFragment) || (currentFragment is FoldersFragment) || isPlaylistFragment) {
             isShuffleable = false
         }
         menu.findItem(R.id.shuffle)?.isVisible = isShuffleable
@@ -510,6 +536,7 @@ class MainActivity : SimpleMusicActivity() {
             TAB_ARTISTS -> org.fossify.commons.R.drawable.ic_person_vector
             TAB_ALBUMS -> R.drawable.ic_album_vector
             TAB_GENRES -> R.drawable.ic_genre_vector
+            TAB_QUEUE -> R.drawable.ic_queue
             TAB_MENU -> org.fossify.commons.R.drawable.ic_three_dots_vector
             else -> R.drawable.ic_music_note_vector
         }
@@ -524,6 +551,7 @@ class MainActivity : SimpleMusicActivity() {
             TAB_ARTISTS -> R.string.artists
             TAB_ALBUMS -> R.string.albums
             TAB_GENRES -> R.string.genres
+            TAB_QUEUE -> R.string.queue
             TAB_MENU -> R.string.menu
             else -> R.string.tracks
         }

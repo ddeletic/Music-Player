@@ -83,12 +83,13 @@ const val TAB_ALBUMS = 8
 const val TAB_TRACKS = 16
 const val TAB_GENRES = 32
 const val TAB_MENU = 64
-const val ACTIVITY_PLAYLIST_FOLDER = 128
+const val TAB_QUEUE = 128
+const val ACTIVITY_PLAYLIST_FOLDER = 256
 
 const val FLAG_MANUAL_CACHE = 1
 const val FLAG_IS_CURRENT = 2
 
-const val ALL_TABS_MASK = TAB_PLAYLISTS or TAB_FOLDERS or TAB_ARTISTS or TAB_ALBUMS or TAB_TRACKS or TAB_MENU
+const val ALL_TABS_MASK = TAB_PLAYLISTS or TAB_FOLDERS or TAB_ARTISTS or TAB_ALBUMS or TAB_TRACKS or TAB_MENU or TAB_QUEUE
 
 val tabsList: ArrayList<Int>
     get() = arrayListOf(
@@ -98,6 +99,7 @@ val tabsList: ArrayList<Int>
         TAB_ALBUMS,
         TAB_TRACKS,
         TAB_GENRES,
+        TAB_QUEUE,
         TAB_MENU
     )
 
