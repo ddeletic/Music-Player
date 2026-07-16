@@ -1,9 +1,7 @@
 package org.fossify.musicplayer.views
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.provider.MediaStore
 import android.util.AttributeSet
 import android.widget.RelativeLayout
 import androidx.media3.common.MediaItem
@@ -16,6 +14,7 @@ import org.fossify.musicplayer.R
 import org.fossify.musicplayer.databinding.ViewCurrentTrackBarBinding
 import org.fossify.musicplayer.extensions.*
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.ColorUtils
 
 class CurrentTrackBar(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet) {
     private val binding by viewBinding(ViewCurrentTrackBarBinding::bind)
@@ -27,8 +26,15 @@ class CurrentTrackBar(context: Context, attributeSet: AttributeSet) : RelativeLa
     }
 
     fun updateColors() {
-        background = context.getProperBackgroundColor().toDrawable()
-        binding.currentTrackLabel.setTextColor(context.getProperTextColor())
+        val backgroundColor = context.getProperBackgroundColor()
+        val bottomNavColor = context.getBottomNavigationBackgroundColor()
+        val mixedColor = ColorUtils.blendARGB(backgroundColor, bottomNavColor, 0.5f)
+        background = mixedColor.toDrawable()
+
+        val textColor = context.getProperTextColor()
+        binding.currentTrackTitle.setTextColor(textColor)
+        binding.currentTrackAlbum.setTextColor(textColor)
+        binding.currentTrackArtist.setTextColor(textColor)
     }
 
     fun updateCurrentTrack(mediaItem: MediaItem?) {
@@ -40,14 +46,10 @@ class CurrentTrackBar(context: Context, attributeSet: AttributeSet) : RelativeLa
             fadeIn()
         }
 
-        val artist = if (track.artist.trim().isNotEmpty() && track.artist != MediaStore.UNKNOWN_STRING) {
-            " • ${track.artist}"
-        } else {
-            ""
-        }
+        binding.currentTrackTitle.text = track.title
+        binding.currentTrackAlbum.text = track.album
+        binding.currentTrackArtist.text = track.artist
 
-        @SuppressLint("SetTextI18n")
-        binding.currentTrackLabel.text = "${track.title}$artist"
         val cornerRadius = resources.getDimension(org.fossify.commons.R.dimen.rounded_corner_radius_small).toInt()
         val currentTrackPlaceholder = resources.getColoredDrawableWithColor(R.drawable.ic_headset, context.getProperTextColor())
         val options = RequestOptions()
@@ -59,7 +61,7 @@ class CurrentTrackBar(context: Context, attributeSet: AttributeSet) : RelativeLa
                 Glide.with(this)
                     .load(coverArt)
                     .apply(options)
-                    .into(findViewById(R.id.current_track_image))
+                    .into(binding.currentTrackImage)
             }
         }
     }
