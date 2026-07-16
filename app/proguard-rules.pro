@@ -27,3 +27,16 @@
 -keep public class org.jaudiotagger.** { public protected *; }
 -keepnames class org.jaudiotagger.**
 -dontwarn org.jaudiotagger.**
+
+# Show icons in PopupMenu
+-keepclassmembers class androidx.appcompat.widget.PopupMenu {
+    ** mPopup;
+}
+
+-keep class androidx.appcompat.view.menu.MenuPopupHelper {
+    public void setForceShowIcon(boolean);
+}
+
+-keepclassmembers class androidx.appcompat.view.menu.MenuBuilder {
+    public void setOptionalIconsVisible(boolean);
+}

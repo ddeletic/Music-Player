@@ -43,6 +43,12 @@ import org.fossify.musicplayer.playback.PlaybackService.Companion.updatePlayback
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.view.ContextThemeWrapper
+import androidx.appcompat.widget.PopupMenu
 
 class MainActivity : SimpleMusicActivity() {
     data class QueueInfo (
@@ -285,27 +291,34 @@ class MainActivity : SimpleMusicActivity() {
 
     private fun refreshMenuItems(position: Int = binding.viewPager.currentItem) {
         binding.mainMenu.requireToolbar().menu.apply {
-            val tab = getVisibleTabs()[position]
-            val isPlaylistFragment = tab == TAB_PLAYLISTS
-            findItem(R.id.create_new_playlist).isVisible = isPlaylistFragment
-            findItem(R.id.create_playlist_from_folder).isVisible = isPlaylistFragment
-            findItem(R.id.import_playlist).isVisible = isPlaylistFragment
-            findItem(R.id.more_apps_from_us).isVisible = !resources.getBoolean(org.fossify.commons.R.bool.hide_google_relations)
-            var isShuffleable = true
-
-            val currentFragment = getCurrentFragment()
-            if ((currentFragment is GenresFragment) or (currentFragment is FoldersFragment) or isPlaylistFragment)
-            {
-                isShuffleable = false
-            }
-            findItem(R.id.shuffle).isVisible = isShuffleable
+            setupMenuVisibility(this, position)
         }
     }
 
+    private fun setupMenuVisibility(menu: Menu, position: Int) {
+        val tab = getVisibleTabs()[position]
+        val isPlaylistFragment = tab == TAB_PLAYLISTS
+        menu.findItem(R.id.create_new_playlist)?.isVisible = isPlaylistFragment
+        menu.findItem(R.id.create_playlist_from_folder)?.isVisible = isPlaylistFragment
+        menu.findItem(R.id.import_playlist)?.isVisible = isPlaylistFragment
+        menu.findItem(R.id.more_apps_from_us)?.isVisible = !resources.getBoolean(org.fossify.commons.R.bool.hide_google_relations)
+        var isShuffleable = true
+
+        val currentFragment = getCurrentFragment()
+        if ((currentFragment is GenresFragment) or (currentFragment is FoldersFragment) or isPlaylistFragment) {
+            isShuffleable = false
+        }
+        menu.findItem(R.id.shuffle)?.isVisible = isShuffleable
+    }
+
     private fun setupOptionsMenu() {
-        binding.mainMenu.requireToolbar().inflateMenu(R.menu.menu_main)
         binding.mainMenu.toggleHideOnScroll(false)
         binding.mainMenu.setupMenu()
+        binding.mainMenu.requireToolbar().apply {
+            menu.clear()
+            navigationIcon = null
+            overflowIcon = null
+        }
 
         binding.mainMenu.onSearchClosedListener = {
             getAllFragments().forEach {
@@ -318,23 +331,49 @@ class MainActivity : SimpleMusicActivity() {
         }
 
         binding.mainMenu.requireToolbar().setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.sort -> showSortingDialog()
-                R.id.rescan_media -> refreshAllFragments(showProgress = true)
-                R.id.sleep_timer -> showSleepTimer()
-                R.id.clear_queue -> confirmAndClearQueue()
-                R.id.create_new_playlist -> createNewPlaylist()
-                R.id.create_playlist_from_folder -> createPlaylistFromFolder()
-                R.id.import_playlist -> tryImportPlaylist()
-                R.id.equalizer -> launchEqualizer()
-                R.id.shuffle -> launchShuffle()
-//                R.id.more_apps_from_us -> launchMoreAppsFromUsIntent()
-                R.id.settings -> launchSettings()
-                R.id.about -> launchAbout()
-                else -> return@setOnMenuItemClickListener false
-            }
-            return@setOnMenuItemClickListener true
+            handleMenuItemClick(menuItem)
         }
+    }
+
+    private fun handleMenuItemClick(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.sort -> showSortingDialog()
+            R.id.rescan_media -> refreshAllFragments(showProgress = true)
+            R.id.sleep_timer -> showSleepTimer()
+            R.id.clear_queue -> confirmAndClearQueue()
+            R.id.create_new_playlist -> createNewPlaylist()
+            R.id.create_playlist_from_folder -> createPlaylistFromFolder()
+            R.id.import_playlist -> tryImportPlaylist()
+            R.id.equalizer -> launchEqualizer()
+            R.id.shuffle -> launchShuffle()
+            R.id.settings -> launchSettings()
+            R.id.about -> launchAbout()
+            else -> return false
+        }
+        return true
+    }
+
+    private fun showBottomMenu(anchor: View) {
+        val theme = getPopupMenuTheme()
+        val contextTheme = ContextThemeWrapper(this, theme)
+        val popupMenu = PopupMenu(contextTheme, anchor, Gravity.END)
+        popupMenu.menuInflater.inflate(R.menu.menu_main, popupMenu.menu)
+        setupMenuVisibility(popupMenu.menu, binding.viewPager.currentItem)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            handleMenuItemClick(menuItem)
+        }
+
+        try {
+            val fieldPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+            fieldPopup.isAccessible = true
+            val menuPopupHelper = fieldPopup.get(popupMenu)
+            val classPopupHelper = Class.forName(menuPopupHelper.javaClass.name)
+            val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType)
+            setForceIcons.invoke(menuPopupHelper, true)
+        } catch (ignored: Exception) {
+        }
+
+        popupMenu.show()
     }
 
     private fun updateMenuColors() {
@@ -407,7 +446,8 @@ class MainActivity : SimpleMusicActivity() {
 
     private fun setupTabs() {
         binding.mainTabsHolder.removeAllTabs()
-        getVisibleTabs().forEach { value ->
+        val visibleTabs = getVisibleTabs()
+        visibleTabs.forEach { value ->
             binding.mainTabsHolder.newTab().setCustomView(org.fossify.commons.R.layout.bottom_tablayout_item).apply {
                 val tabItemBinding = BottomTablayoutItemBinding.bind(customView!!)
                 tabItemBinding.tabItemIcon.setImageDrawable(getTabIcon(value))
@@ -417,17 +457,30 @@ class MainActivity : SimpleMusicActivity() {
             }
         }
 
+        binding.mainTabsHolder.newTab().setCustomView(org.fossify.commons.R.layout.bottom_tablayout_item).apply {
+            val tabItemBinding = BottomTablayoutItemBinding.bind(customView!!)
+            tabItemBinding.tabItemIcon.setImageDrawable(getTabIcon(TAB_MENU))
+            tabItemBinding.tabItemLabel.text = getTabLabel(TAB_MENU)
+            AutofitHelper.create(tabItemBinding.tabItemLabel)
+            binding.mainTabsHolder.addTab(this)
+        }
+
         binding.mainTabsHolder.onTabSelectionChanged(
             tabUnselectedAction = {
                 updateBottomTabItemColors(it.customView, false)
             },
             tabSelectedAction = {
-                binding.viewPager.currentItem = it.position
-                updateBottomTabItemColors(it.customView, true)
-                binding.viewPager.post {
-                    getAdapter()?.getFragmentAt(it.position)?.onSearchQueryChanged(
-                        text = binding.mainMenu.getCurrentQuery()
-                    )
+                if (it.position < visibleTabs.size) {
+                    binding.viewPager.currentItem = it.position
+                    updateBottomTabItemColors(it.customView, true)
+                    binding.viewPager.post {
+                        getAdapter()?.getFragmentAt(it.position)?.onSearchQueryChanged(
+                            text = binding.mainMenu.getCurrentQuery()
+                        )
+                    }
+                } else {
+                    showBottomMenu(it.customView!!)
+                    binding.mainTabsHolder.getTabAt(binding.viewPager.currentItem)?.select()
                 }
             }
         )
@@ -448,7 +501,7 @@ class MainActivity : SimpleMusicActivity() {
         binding.mainTabsHolder.setBackgroundColor(bottomBarColor)
     }
 
-    private fun getInactiveTabIndexes(activeIndex: Int) = (0 until tabsList.size).filter { it != activeIndex }
+    private fun getInactiveTabIndexes(activeIndex: Int) = (0 until binding.mainTabsHolder.tabCount).filter { it != activeIndex }
 
     private fun getTabIcon(position: Int): Drawable {
         val drawableId = when (position) {
@@ -457,6 +510,7 @@ class MainActivity : SimpleMusicActivity() {
             TAB_ARTISTS -> org.fossify.commons.R.drawable.ic_person_vector
             TAB_ALBUMS -> R.drawable.ic_album_vector
             TAB_GENRES -> R.drawable.ic_genre_vector
+            TAB_MENU -> org.fossify.commons.R.drawable.ic_three_dots_vector
             else -> R.drawable.ic_music_note_vector
         }
 
@@ -470,6 +524,7 @@ class MainActivity : SimpleMusicActivity() {
             TAB_ARTISTS -> R.string.artists
             TAB_ALBUMS -> R.string.albums
             TAB_GENRES -> R.string.genres
+            TAB_MENU -> R.string.menu
             else -> R.string.tracks
         }
 

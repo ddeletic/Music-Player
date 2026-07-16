@@ -37,14 +37,14 @@ class ManageVisibleTabsDialog(val activity: BaseSimpleActivity, val callback: (r
     }
 
     private fun dialogConfirmed() {
-        var result = 0
+        var result = activity.config.showTabs and TAB_MENU
         for ((key, value) in tabs) {
             if (value.isChecked) {
                 result += key
             }
         }
 
-        if (result == 0) {
+        if (result == 0 || result == TAB_MENU) {
             result = ALL_TABS_MASK
         }
 

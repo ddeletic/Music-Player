@@ -3,64 +3,68 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="AppCompatResource">
-    <item
-        android:id="@+id/sort"
-        android:icon="@drawable/ic_sort_vector"
-        android:title="@string/sort_by"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/clear_queue"
-        android:showAsAction="never"
-        android:title="Clear queue"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/create_new_playlist"
-        android:showAsAction="never"
-        android:title="@string/create_new_playlist"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/create_playlist_from_folder"
-        android:showAsAction="never"
-        android:title="@string/create_playlist_from_folder"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/import_playlist"
-        android:showAsAction="never"
-        android:title="@string/import_playlist"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/rescan_media"
-        android:showAsAction="never"
-        android:title="@string/rescan_media"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/sleep_timer"
-        android:showAsAction="never"
-        android:title="@string/sleep_timer"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/equalizer"
-        android:icon="@drawable/ic_equalizer_vector"
-        android:title="@string/equalizer"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/shuffle"
-        android:icon="@drawable/ic_shuffle_vector"
-        android:title="@string/shuffle"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/settings"
-        android:icon="@drawable/ic_settings_cog_vector"
-        android:title="@string/settings"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/about"
-        android:icon="@drawable/ic_info_vector"
-        android:title="@string/about"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/more_apps_from_us"
-        android:icon="@drawable/ic_google_play_vector"
-        android:title="@string/more_fossify_apps"
-        app:showAsAction="ifRoom" />
+    <group android:id="@+id/menu_group_main">
+        <item
+            android:id="@+id/sort"
+            android:icon="@drawable/ic_sort_vector"
+            android:title="@string/sort_by"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/clear_queue"
+            android:icon="@drawable/ic_delete_vector"
+            android:title="Clear queue"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/create_new_playlist"
+            android:icon="@drawable/ic_plus_vector"
+            android:title="@string/create_new_playlist"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/create_playlist_from_folder"
+            android:icon="@drawable/ic_plus_vector"
+            android:title="@string/create_playlist_from_folder"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/import_playlist"
+            android:icon="@drawable/ic_playlist_vector"
+            android:title="@string/import_playlist"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/rescan_media"
+            android:icon="@drawable/ic_sync"
+            android:title="@string/rescan_media"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/sleep_timer"
+            android:icon="@drawable/ic_alarm_24"
+            android:title="@string/sleep_timer"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/equalizer"
+            android:icon="@drawable/ic_equalizer_vector"
+            android:title="@string/equalizer"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/shuffle"
+            android:icon="@drawable/ic_shuffle_vector"
+            android:title="@string/shuffle"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_settings_cog_vector"
+            android:title="@string/settings"
+            app:showAsAction="never" />
+    </group>
+    <group android:id="@+id/menu_group_footer">
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_info_vector"
+            android:title="@string/about"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/more_apps_from_us"
+            android:icon="@drawable/ic_google_play_vector"
+            android:title="@string/more_fossify_apps"
+            app:showAsAction="never" />
+    </group>
 </menu>
