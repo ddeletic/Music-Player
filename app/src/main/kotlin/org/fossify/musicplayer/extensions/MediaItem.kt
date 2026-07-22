@@ -55,7 +55,7 @@ fun buildMediaItem(
         .setTrackNumber(trackNumber)
         .setDiscNumber(discNumber)
         .setReleaseYear(year)
-        .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
+        .setMediaType(mediaType)
         .setArtworkUri(artworkUri)
         .apply {
             if (track != null) {
