@@ -22,7 +22,7 @@ import org.fossify.musicplayer.playback.player.SimpleMusicPlayer
 import org.fossify.musicplayer.playback.player.initializeSessionAndPlayer
 
 @OptIn(UnstableApi::class)
-class PlaybackService : MediaLibraryService(), MediaSessionService.Listener {
+open class PlaybackService : MediaLibraryService(), MediaSessionService.Listener {
     internal lateinit var player: SimpleMusicPlayer
     internal lateinit var playerListener: Player.Listener
     internal lateinit var mediaSession: MediaLibrarySession

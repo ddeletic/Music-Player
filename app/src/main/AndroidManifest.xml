@@ -165,9 +165,227 @@
             android:parentActivityName=".activities.TrackActivity" />
 
         <service
-            android:name=".playback.PlaybackService"
+            android:name=".playback.PlaybackServiceRed"
+            android:enabled="false"
             android:exported="true"
-            android:foregroundServiceType="mediaPlayback">
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_red">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServicePink"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_pink">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServicePurple"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_purple">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceDeepPurple"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_deep_purple">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceIndigo"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_indigo">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceBlue"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_blue">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceLightBlue"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_light_blue">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceCyan"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_cyan">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceTeal"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_teal">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceGreen"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceLightGreen"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_light_green">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceLime"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_lime">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceYellow"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_yellow">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceAmber"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_amber">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceOrange"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_orange">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceDeepOrange"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_deep_orange">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceBrown"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_brown">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceBlueGrey"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_blue_grey">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".playback.PlaybackServiceGreyBlack"
+            android:enabled="false"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback"
+            android:icon="@mipmap/ic_launcher_grey_black">
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaLibraryService" />
                 <action android:name="android.media.browse.MediaBrowserService" />

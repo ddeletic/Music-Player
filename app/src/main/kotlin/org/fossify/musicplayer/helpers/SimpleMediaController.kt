@@ -24,8 +24,17 @@ class SimpleMediaController(val context: Application) {
 
     @Synchronized
     fun createControllerAsync() {
+        val serviceIntent = android.content.Intent("androidx.media3.session.MediaLibraryService")
+        serviceIntent.setPackage(context.packageName)
+        val resolveInfo = context.packageManager.resolveService(serviceIntent, 0)
+        val componentName = if (resolveInfo != null) {
+            ComponentName(context.packageName, resolveInfo.serviceInfo.name)
+        } else {
+            ComponentName(context, PlaybackService::class.java)
+        }
+
         controllerFuture = MediaController
-            .Builder(context, SessionToken(context, ComponentName(context, PlaybackService::class.java)))
+            .Builder(context, SessionToken(context, componentName))
             .setApplicationLooper(Looper.getMainLooper())
             .buildAsync()
 

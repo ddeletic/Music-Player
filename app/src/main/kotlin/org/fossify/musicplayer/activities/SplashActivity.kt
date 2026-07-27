@@ -5,7 +5,10 @@ import org.fossify.commons.activities.BaseSplashActivity
 
 class SplashActivity : BaseSplashActivity() {
     override fun initActivity() {
-        startActivity(Intent(this, MainActivity::class.java))
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtras(this.intent)
+
+        startActivity(intent)
         finish()
     }
 }
